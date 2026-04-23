@@ -3,52 +3,55 @@ const DB_VERSION = 1;
 const UI_KEY = "pplElite.ui";
 const SPLITS = ["Push", "Pull", "Legs"];
 const DEFAULT_EXERCISES = [
-  ["bench", "Barbell Bench Press", "Chest", ["Chest"], ["Triceps", "Front Delts"], "5-8", 4, "Barbell"],
-  ["db_bench", "Dumbbell Bench Press", "Chest", ["Chest"], ["Triceps"], "8-12", 3, "Dumbbells"],
-  ["incline_bench", "Incline Barbell Bench Press", "Chest", ["Upper Chest"], ["Triceps", "Delts"], "6-10", 4, "Barbell"],
+  ["db_bench", "Dumbbell Chest Press", "Chest", ["Chest"], ["Triceps"], "6-10", 4, "Dumbbells"],
   ["incline_db", "Incline Dumbbell Press", "Chest", ["Upper Chest"], ["Delts"], "8-12", 3, "Dumbbells"],
-  ["pec_fly", "Pec Deck Fly", "Chest", ["Chest"], [], "10-15", 3, "Machine"],
-  ["cable_fly", "Cable Fly", "Chest", ["Chest"], [], "12-15", 3, "Cable"],
-  ["ohp", "Overhead Press", "Shoulders", ["Delts"], ["Triceps"], "5-8", 4, "Barbell"],
-  ["db_shoulder_press", "Dumbbell Shoulder Press", "Shoulders", ["Delts"], ["Triceps"], "8-12", 3, "Dumbbells"],
-  ["lateral_raise", "Lateral Raise", "Shoulders", ["Side Delts"], [], "12-20", 4, "Dumbbells"],
+  ["pec_fly", "Chest Fly", "Chest", ["Chest"], [], "10-15", 3, "Machine"],
+  ["ohp", "Shoulder Press", "Shoulders", ["Delts"], ["Triceps"], "6-10", 3, "Machine"],
+  ["lateral_raise", "Lateral Raises", "Shoulders", ["Side Delts"], [], "12-20", 4, "Dumbbells"],
   ["rear_delt_fly", "Rear Delt Fly", "Shoulders", ["Rear Delts"], [], "12-20", 3, "Machine"],
-  ["dips", "Weighted Dips", "Chest", ["Chest", "Triceps"], ["Delts"], "6-10", 3, "Bodyweight"],
-  ["pushdown", "Tricep Pushdown", "Arms", ["Triceps"], [], "10-15", 3, "Cable"],
-  ["skullcrusher", "Skull Crusher", "Arms", ["Triceps"], [], "8-12", 3, "EZ Bar"],
-  ["overhead_tricep", "Overhead Cable Extension", "Arms", ["Triceps"], [], "10-15", 3, "Cable"],
-  ["deadlift", "Deadlift", "Back", ["Posterior Chain"], ["Lats"], "3-5", 3, "Barbell"],
-  ["rdl", "Romanian Deadlift", "Hamstrings", ["Hamstrings"], ["Glutes", "Back"], "6-10", 4, "Barbell"],
-  ["pullup", "Pull-Up", "Back", ["Lats"], ["Biceps"], "6-10", 4, "Bodyweight"],
-  ["chinup", "Chin-Up", "Back", ["Lats", "Biceps"], [], "6-10", 3, "Bodyweight"],
-  ["row", "Barbell Row", "Back", ["Mid Back"], ["Biceps"], "6-10", 4, "Barbell"],
-  ["db_row", "One-Arm Dumbbell Row", "Back", ["Lats"], ["Biceps"], "8-12", 3, "Dumbbells"],
-  ["chest_supported_row", "Chest Supported Row", "Back", ["Mid Back"], ["Rear Delts"], "8-12", 3, "Machine"],
-  ["pulldown", "Lat Pulldown", "Back", ["Lats"], ["Biceps"], "8-12", 4, "Cable"],
-  ["cable_row", "Seated Cable Row", "Back", ["Mid Back"], ["Rear Delts"], "8-12", 3, "Cable"],
-  ["face_pull", "Face Pull", "Shoulders", ["Rear Delts"], ["Traps"], "12-20", 3, "Cable"],
-  ["shrug", "Dumbbell Shrug", "Traps", ["Traps"], [], "10-15", 3, "Dumbbells"],
-  ["curl", "Dumbbell Curl", "Arms", ["Biceps"], [], "10-15", 3, "Dumbbells"],
-  ["barbell_curl", "Barbell Curl", "Arms", ["Biceps"], [], "8-12", 3, "Barbell"],
-  ["hammer_curl", "Hammer Curl", "Arms", ["Biceps", "Forearms"], [], "10-15", 3, "Dumbbells"],
-  ["preacher_curl", "Preacher Curl", "Arms", ["Biceps"], [], "10-15", 3, "Machine"],
-  ["squat", "Back Squat", "Legs", ["Quads", "Glutes"], ["Core"], "4-8", 4, "Barbell"],
-  ["front_squat", "Front Squat", "Legs", ["Quads"], ["Core"], "4-8", 3, "Barbell"],
-  ["hack_squat", "Hack Squat", "Legs", ["Quads"], ["Glutes"], "8-12", 4, "Machine"],
-  ["leg_press", "Leg Press", "Legs", ["Quads"], ["Glutes"], "10-15", 4, "Machine"],
-  ["bulgarian_split_squat", "Bulgarian Split Squat", "Legs", ["Quads", "Glutes"], [], "8-12", 3, "Dumbbells"],
-  ["lunge", "Walking Lunge", "Legs", ["Quads", "Glutes"], ["Hamstrings"], "10-16", 3, "Dumbbells"],
+  ["pushdown", "Triceps Pushdown", "Arms", ["Triceps"], [], "10-15", 3, "Cable"],
+  ["overhead_tricep", "Overhead Triceps Extension", "Arms", ["Triceps"], [], "10-15", 3, "Cable"],
+  ["deadlift", "Deadlift", "Back", ["Posterior Chain"], ["Lats"], "5-8", 4, "Barbell"],
+  ["rdl", "Romanian Deadlift", "Hamstrings", ["Hamstrings"], ["Glutes", "Back"], "8-12", 3, "Barbell"],
+  ["tbar_row", "T-Bar Row", "Back", ["Mid Back"], ["Biceps"], "8-12", 3, "Machine"],
+  ["pulldown", "Lat Pulldown", "Back", ["Lats"], ["Biceps"], "8-12", 3, "Cable"],
+  ["curl", "Biceps Curl", "Arms", ["Biceps"], [], "8-12", 3, "Dumbbells"],
+  ["hammer_curl", "Hammer Curl", "Arms", ["Biceps", "Forearms"], [], "10-12", 3, "Dumbbells"],
+  ["squat", "Squat", "Legs", ["Quads", "Glutes"], ["Core"], "5-10", 4, "Barbell"],
   ["leg_extension", "Leg Extension", "Legs", ["Quads"], [], "12-15", 3, "Machine"],
-  ["hip_thrust", "Hip Thrust", "Glutes", ["Glutes"], ["Hamstrings"], "8-12", 4, "Barbell"],
-  ["leg_curl", "Leg Curl", "Hamstrings", ["Hamstrings"], [], "10-15", 3, "Machine"],
-  ["seated_leg_curl", "Seated Leg Curl", "Hamstrings", ["Hamstrings"], [], "10-15", 3, "Machine"],
-  ["calf", "Calf Raise", "Calves", ["Calves"], [], "12-20", 4, "Machine"],
-  ["seated_calf", "Seated Calf Raise", "Calves", ["Calves"], [], "12-20", 4, "Machine"]
+  ["leg_curl", "Hamstring Curl", "Hamstrings", ["Hamstrings"], [], "10-15", 3, "Machine"],
+  ["calf", "Calf Raises", "Calves", ["Calves"], [], "12-20", 4, "Machine"]
+];
+const LEGACY_DEFAULT_EXERCISE_IDS = [
+  "bench",
+  "incline_bench",
+  "cable_fly",
+  "db_shoulder_press",
+  "dips",
+  "skullcrusher",
+  "pullup",
+  "chinup",
+  "row",
+  "db_row",
+  "chest_supported_row",
+  "cable_row",
+  "face_pull",
+  "shrug",
+  "barbell_curl",
+  "preacher_curl",
+  "front_squat",
+  "hack_squat",
+  "leg_press",
+  "bulgarian_split_squat",
+  "lunge",
+  "hip_thrust",
+  "seated_leg_curl",
+  "seated_calf"
 ];
 const DEFAULT_TEMPLATE_MAP = {
-  Push: ["bench", "db_bench", "incline_bench", "incline_db", "pec_fly", "ohp", "db_shoulder_press", "lateral_raise", "dips", "pushdown", "skullcrusher", "overhead_tricep"],
-  Pull: ["deadlift", "rdl", "pullup", "chinup", "row", "db_row", "chest_supported_row", "pulldown", "cable_row", "face_pull", "shrug", "curl", "barbell_curl", "hammer_curl", "preacher_curl"],
-  Legs: ["squat", "front_squat", "hack_squat", "leg_press", "bulgarian_split_squat", "lunge", "leg_extension", "hip_thrust", "rdl", "leg_curl", "seated_leg_curl", "calf", "seated_calf"]
+  Push: ["db_bench", "incline_db", "pec_fly", "ohp", "lateral_raise", "pushdown", "overhead_tricep"],
+  Pull: ["deadlift", "pulldown", "tbar_row", "rear_delt_fly", "curl", "hammer_curl"],
+  Legs: ["squat", "rdl", "leg_curl", "leg_extension", "calf"]
 };
 const STORE_NAMES = [
   "exercises",
@@ -265,6 +268,165 @@ async function addCommonExercisesIfNeeded() {
   await dbApi.put("meta", { id: "commonExercisesAdded", value: true, exerciseCount: exerciseRows.length, templateCount: templateRows.length, updatedAt: createdAt });
 }
 
+async function applyDefaultPlanIfNeeded() {
+  const applied = await dbApi.get("meta", "defaultPlanApplied");
+  if (applied) return;
+
+  const updatedAt = nowIso();
+  const [existingExercises, templates, existingTemplateExercises] = await Promise.all([
+    dbApi.getAll("exercises"),
+    dbApi.getAll("templates"),
+    dbApi.getAll("templateExercises")
+  ]);
+
+  const exerciseDefaults = new Map(DEFAULT_EXERCISES.map(([id, name, category, primaryMuscles, secondaryMuscles, defaultRepRange, defaultSetCount, equipment]) => [
+    id,
+    { id, name, category, primaryMuscles, secondaryMuscles, defaultRepRange, defaultSetCount, equipment }
+  ]));
+
+  const exerciseRows = DEFAULT_EXERCISES.map(([id, name, category, primaryMuscles, secondaryMuscles, defaultRepRange, defaultSetCount, equipment]) => {
+    const existing = existingExercises.find((exercise) => exercise.id === id);
+    return {
+      ...(existing || { id, createdAt: updatedAt }),
+      name,
+      category,
+      primaryMuscles,
+      secondaryMuscles,
+      defaultRepRange,
+      defaultSetCount,
+      equipment
+    };
+  });
+
+  const templateRowsToDelete = [];
+  const templateRowsToPut = [];
+  templates.forEach((template) => {
+    const ids = DEFAULT_TEMPLATE_MAP[template.splitType];
+    if (!ids) return;
+
+    templateRowsToDelete.push(...existingTemplateExercises.filter((row) => row.templateId === template.id).map((row) => row.id));
+    template.orderedExerciseIds = ids.slice();
+    template.updatedAt = updatedAt;
+
+    ids.forEach((exerciseId, orderIndex) => {
+      const defaults = exerciseDefaults.get(exerciseId);
+      if (!defaults) return;
+      templateRowsToPut.push({
+        id: `${template.id}_${exerciseId}`,
+        templateId: template.id,
+        exerciseId,
+        orderIndex,
+        defaultSets: defaults.defaultSetCount,
+        defaultRepRange: defaults.defaultRepRange,
+        enabledByDefault: true
+      });
+    });
+  });
+
+  await dbApi.bulkPut("exercises", exerciseRows);
+  if (templateRowsToDelete.length) await dbApi.bulkDelete("templateExercises", templateRowsToDelete);
+  if (templateRowsToPut.length) await dbApi.bulkPut("templateExercises", templateRowsToPut);
+  await dbApi.bulkPut("templates", templates);
+  await dbApi.put("meta", { id: "defaultPlanApplied", value: true, updatedAt });
+}
+
+async function pruneLegacyDefaultExercisesIfNeeded() {
+  const pruned = await dbApi.get("meta", "legacyDefaultsPruned");
+  if (pruned) return;
+
+  const updatedAt = nowIso();
+  const [exercises, templateExercises, templates] = await Promise.all([
+    dbApi.getAll("exercises"),
+    dbApi.getAll("templateExercises"),
+    dbApi.getAll("templates")
+  ]);
+
+  const removable = exercises.filter((exercise) => LEGACY_DEFAULT_EXERCISE_IDS.includes(exercise.id));
+  const removableIds = removable.map((exercise) => exercise.id);
+  const templateRowsToDelete = templateExercises.filter((row) => removableIds.includes(row.exerciseId)).map((row) => row.id);
+
+  if (removableIds.length) await dbApi.bulkDelete("exercises", removableIds);
+  if (templateRowsToDelete.length) await dbApi.bulkDelete("templateExercises", templateRowsToDelete);
+
+  if (removableIds.length) {
+    templates.forEach((template) => {
+      template.orderedExerciseIds = (template.orderedExerciseIds || []).filter((id) => !removableIds.includes(id));
+      template.updatedAt = updatedAt;
+    });
+    await dbApi.bulkPut("templates", templates);
+  }
+
+  await dbApi.put("meta", {
+    id: "legacyDefaultsPruned",
+    value: true,
+    removedExerciseCount: removableIds.length,
+    updatedAt
+  });
+}
+
+async function repairPlanTemplatesIfNeeded() {
+  const repaired = await dbApi.get("meta", "planTemplatesRepaired");
+  if (repaired) return;
+
+  const updatedAt = nowIso();
+  const [templates, templateExercises] = await Promise.all([
+    dbApi.getAll("templates"),
+    dbApi.getAll("templateExercises")
+  ]);
+
+  const defaultsById = new Map(
+    DEFAULT_EXERCISES.map(([id, , , , , defaultRepRange, defaultSetCount]) => [id, { defaultRepRange, defaultSetCount }])
+  );
+
+  const rowsToPut = [];
+  templates.forEach((template) => {
+    const defaultIds = DEFAULT_TEMPLATE_MAP[template.splitType] || [];
+    if (!defaultIds.length) return;
+
+    const existingRows = templateExercises
+      .filter((row) => row.templateId === template.id)
+      .sort((a, b) => a.orderIndex - b.orderIndex);
+    const byExerciseId = new Map(existingRows.map((row) => [row.exerciseId, row]));
+
+    // Ensure each plan exercise exists.
+    defaultIds.forEach((exerciseId) => {
+      if (byExerciseId.has(exerciseId)) return;
+      const defaults = defaultsById.get(exerciseId);
+      if (!defaults) return;
+      const newRow = {
+        id: `${template.id}_${exerciseId}`,
+        templateId: template.id,
+        exerciseId,
+        orderIndex: 0,
+        defaultSets: defaults.defaultSetCount,
+        defaultRepRange: defaults.defaultRepRange,
+        enabledByDefault: true
+      };
+      existingRows.push(newRow);
+      byExerciseId.set(exerciseId, newRow);
+    });
+
+    const extraIds = existingRows
+      .map((row) => row.exerciseId)
+      .filter((exerciseId) => !defaultIds.includes(exerciseId));
+    const mergedOrder = [...defaultIds, ...extraIds];
+
+    mergedOrder.forEach((exerciseId, orderIndex) => {
+      const row = byExerciseId.get(exerciseId);
+      if (!row) return;
+      row.orderIndex = orderIndex;
+      rowsToPut.push(row);
+    });
+
+    template.orderedExerciseIds = mergedOrder;
+    template.updatedAt = updatedAt;
+  });
+
+  if (rowsToPut.length) await dbApi.bulkPut("templateExercises", rowsToPut);
+  await dbApi.bulkPut("templates", templates);
+  await dbApi.put("meta", { id: "planTemplatesRepaired", value: true, updatedAt });
+}
+
 async function removeLegacyDemoHistory() {
   const removed = await dbApi.get("meta", "demoHistoryRemoved");
   if (removed) return;
@@ -384,7 +546,7 @@ function buildAnalytics({ workouts }) {
     });
   });
 
-  const keyLift = bestByExercise["Back Squat"] ? "Back Squat" : Object.keys(bestByExercise)[0];
+  const keyLift = bestByExercise["Squat"] ? "Squat" : Object.keys(bestByExercise)[0];
   const keyTrend = trendByExercise[keyLift] || [];
   const weeklyStart = new Date();
   weeklyStart.setDate(weeklyStart.getDate() - 6);
@@ -415,7 +577,7 @@ function completedSets(exercise) {
   return exercise.sets.filter((set) => set.completed && num(set.weight) > 0 && int(set.reps) > 0);
 }
 
-function latestLoggedWeightsByExercise(workouts = state.allWorkouts) {
+function latestLoggedSetsByExercise(workouts = state.allWorkouts) {
   const latest = new Map();
   workouts
     .filter((workout) => workout.status === "finished")
@@ -424,16 +586,22 @@ function latestLoggedWeightsByExercise(workouts = state.allWorkouts) {
         if (latest.has(exercise.exerciseId)) return;
         const sets = completedSets(exercise);
         if (!sets.length) return;
-        latest.set(exercise.exerciseId, sets.map((set) => set.weight));
+        latest.set(exercise.exerciseId, sets.map((set) => ({ weight: num(set.weight), reps: int(set.reps) })));
       });
     });
   return latest;
 }
 
-function weightPrefill(weights, index) {
-  if (!weights?.length) return "";
-  if (weights[index] != null) return String(weights[index]);
-  return String(weights[weights.length - 1] || "");
+function weightPrefill(sets, index) {
+  if (!sets?.length) return "";
+  const source = sets[index] || sets[sets.length - 1];
+  return source?.weight ? String(source.weight) : "";
+}
+
+function repsPrefill(sets, index) {
+  if (!sets?.length) return "";
+  const source = sets[index] || sets[sets.length - 1];
+  return source?.reps ? String(source.reps) : "";
 }
 
 function buildExerciseProgress(workouts = state.allWorkouts) {
@@ -510,6 +678,30 @@ function progressPath(points, width = 320, height = 120) {
     const y = height - ((point.estimated1RM - min) / span) * (height - 16) - 8;
     return `${index === 0 ? "M" : "L"} ${x.toFixed(1)} ${y.toFixed(1)}`;
   }).join(" ");
+}
+
+function buildExerciseBenchmarks(workouts = state.allWorkouts) {
+  const map = new Map();
+  workouts
+    .filter((workout) => workout.status === "finished")
+    .forEach((workout) => {
+      workout.exercises.forEach((exercise) => {
+        const sets = completedSets(exercise);
+        if (!sets.length) return;
+        const latestSet = sets.reduce((best, set) => {
+          const current = num(set.weight) * (1 + int(set.reps) / 30);
+          return current > best.score ? { weight: num(set.weight), reps: int(set.reps), score: current, date: workout.startedAt } : best;
+        }, { weight: 0, reps: 0, score: 0, date: workout.startedAt });
+        const entry = map.get(exercise.exerciseId) || {
+          latest: null,
+          best: { weight: 0, reps: 0, score: 0, date: null }
+        };
+        if (!entry.latest) entry.latest = latestSet;
+        if (latestSet.score > entry.best.score) entry.best = latestSet;
+        map.set(exercise.exerciseId, entry);
+      });
+    });
+  return map;
 }
 
 function totalVolume(workout) {
@@ -673,7 +865,7 @@ async function startWorkout() {
   if (state.active && !confirm("A workout is already active. Replace it with a new one?")) return;
   const selected = state.templateRows.filter((row) => row.enabledByDefault);
   if (!selected.length) return toast("Enable at least one exercise.");
-  const latestWeights = latestLoggedWeightsByExercise();
+  const latestSets = latestLoggedSetsByExercise();
   const startedAt = nowIso();
   const session = {
     id: uid("active"),
@@ -694,8 +886,8 @@ async function startWorkout() {
       sets: Array.from({ length: row.defaultSets }, (_, setIndex) => ({
         id: uid("active_set"),
         setNumber: setIndex + 1,
-        weight: weightPrefill(latestWeights.get(row.exerciseId), setIndex),
-        reps: "",
+        weight: weightPrefill(latestSets.get(row.exerciseId), setIndex),
+        reps: repsPrefill(latestSets.get(row.exerciseId), setIndex),
         completed: false,
         isWarmup: false,
         rir: ""
@@ -741,6 +933,7 @@ function renderActive() {
     $("[data-action='go-home']").addEventListener("click", () => { state.tab = "home"; render(); });
     return;
   }
+  const benchmarks = buildExerciseBenchmarks();
   $("#view").innerHTML = `
     <div class="stack">
       <section class="card active-hero">
@@ -752,7 +945,7 @@ function renderActive() {
         <div id="timer" class="timer-pill">${fmtTimer(activeSeconds())}</div>
       </section>
       <div class="stack">
-        ${state.active.exercises.map((exercise, index) => activeExerciseCard(exercise, index)).join("")}
+        ${state.active.exercises.map((exercise, index) => activeExerciseCard(exercise, index, benchmarks.get(exercise.exerciseId))).join("")}
       </div>
       ${cardioCard(state.active.cardio)}
       <div class="field">
@@ -774,13 +967,17 @@ function focusCopy(split) {
   return split === "Push" ? "Chest • Delts • Triceps" : split === "Pull" ? "Back • Biceps • Posterior chain" : "Quads • Hamstrings • Calves";
 }
 
-function activeExerciseCard(exercise, index) {
+function activeExerciseCard(exercise, index, benchmark) {
+  const benchmarkCopy = benchmark?.latest
+    ? `Last ${benchmark.latest.weight} × ${benchmark.latest.reps} • Best e1RM ${Math.round(benchmark.best.score)}`
+    : "No previous logged sets yet.";
   return `
     <section class="card log-card" data-ex-index="${index}">
       <div class="log-head">
         <div>
           <div class="exercise-title">${escapeHtml(exercise.exerciseNameSnapshot)}</div>
           <div class="exercise-meta">Tap weight, reps, then lock the set.</div>
+          <div class="exercise-meta">${escapeHtml(benchmarkCopy)}</div>
         </div>
         <button class="small-btn" data-action="add-set" data-ex-index="${index}" type="button">+ Set</button>
       </div>
@@ -856,7 +1053,16 @@ function bindActive() {
   }));
   $$("[data-action='add-set']").forEach((button) => button.addEventListener("click", async () => {
     const ex = state.active.exercises[int(button.dataset.exIndex)];
-    ex.sets.push({ id: uid("active_set"), setNumber: ex.sets.length + 1, weight: "", reps: "", completed: false, isWarmup: false, rir: "" });
+    const lastSet = ex.sets[ex.sets.length - 1];
+    ex.sets.push({
+      id: uid("active_set"),
+      setNumber: ex.sets.length + 1,
+      weight: lastSet?.weight ?? "",
+      reps: lastSet?.reps ?? "",
+      completed: false,
+      isWarmup: false,
+      rir: ""
+    });
     await persistActive();
     render();
   }));
@@ -1189,7 +1395,61 @@ function defaultReps(repRange = "8-12") {
 function openWorkoutEditor(workout, isImport) {
   const root = $("#modal-root");
   const draft = workout;
-  const renderEditor = () => {
+  const readEditorViewState = () => {
+    const modal = $(".modal", root);
+    const active = document.activeElement;
+    const state = {
+      modalScrollTop: modal?.scrollTop || 0,
+      pageScrollY: window.scrollY || 0,
+      focus: null
+    };
+    if (!active || !root.contains(active)) return state;
+
+    const focus = {};
+    const attrs = [
+      "data-edit-field",
+      "data-ex-field",
+      "data-edit-set",
+      "data-cardio-edit",
+      "data-editor-action",
+      "data-ex-index",
+      "data-set-index",
+      "data-cardio-index"
+    ];
+    attrs.forEach((name) => {
+      const value = active.getAttribute(name);
+      if (value != null) focus[name] = value;
+    });
+    if (Object.keys(focus).length) {
+      if (typeof active.selectionStart === "number") focus.selectionStart = active.selectionStart;
+      if (typeof active.selectionEnd === "number") focus.selectionEnd = active.selectionEnd;
+      state.focus = focus;
+    }
+    return state;
+  };
+
+  const restoreEditorViewState = (snapshot) => {
+    if (!snapshot) return;
+    const modal = $(".modal", root);
+    if (modal) modal.scrollTop = snapshot.modalScrollTop || 0;
+    window.scrollTo(0, snapshot.pageScrollY || 0);
+    if (!snapshot.focus) return;
+
+    const cssEscape = (value) => (window.CSS?.escape ? window.CSS.escape(String(value)) : String(value).replace(/["\\]/g, "\\$&"));
+    const selector = Object.entries(snapshot.focus)
+      .filter(([key]) => key.startsWith("data-"))
+      .map(([key, value]) => `[${key}="${cssEscape(value)}"]`)
+      .join("");
+    if (!selector) return;
+    const target = root.querySelector(selector);
+    if (!target) return;
+    target.focus({ preventScroll: true });
+    if (typeof snapshot.focus.selectionStart === "number" && typeof target.setSelectionRange === "function") {
+      target.setSelectionRange(snapshot.focus.selectionStart, snapshot.focus.selectionEnd ?? snapshot.focus.selectionStart);
+    }
+  };
+
+  const renderEditor = (snapshot = null) => {
     const startDate = localDateInput(draft.startedAt);
     const startTime = localTimeInput(draft.startedAt);
     const endDate = draft.endedAt ? localDateInput(draft.endedAt) : startDate;
@@ -1248,7 +1508,8 @@ function openWorkoutEditor(workout, isImport) {
         </section>
       </div>
     `;
-    bindEditor(draft, renderEditor, isImport);
+    bindEditor(draft, () => renderEditor(readEditorViewState()), isImport);
+    if (snapshot) requestAnimationFrame(() => restoreEditorViewState(snapshot));
   };
   renderEditor();
 }
@@ -1586,6 +1847,9 @@ async function init() {
   db = await dbApi.open();
   await seedIfNeeded();
   await addCommonExercisesIfNeeded();
+  await applyDefaultPlanIfNeeded();
+  await pruneLegacyDefaultExercisesIfNeeded();
+  await repairPlanTemplatesIfNeeded();
   await removeLegacyDemoHistory();
   await hydrate();
   bindShell();
