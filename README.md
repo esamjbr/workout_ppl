@@ -49,6 +49,10 @@ Go to `History`, tap `Import Past Workout`, fill in date/time, workout type, exe
 
 Use the Home tab to add custom exercises to the selected split and reorder template cards by dragging the handle. The data is persisted in IndexedDB and used when starting new workouts.
 
+The starter Push, Pull, and Legs templates include a larger catalog of common gym movements. On Home, use the checkmark to include/exclude an exercise for the next workout, drag to reorder, or tap the red minus button to remove it from that split.
+
+When importing or editing a workout in History, each exercise has a `Choose Exercise` dropdown so you can select from the saved exercise library instead of typing every movement manually. Custom names are still supported.
+
 ## Sets
 
 During an active workout, tap `+ Set` to add a set or the red minus button on a set row to delete it. The same controls are available when editing historical or imported workouts.
