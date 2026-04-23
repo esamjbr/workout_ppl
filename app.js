@@ -100,7 +100,8 @@ let state = {
   active: null,
   activeStartedAt: null,
   search: "",
-  analytics: null
+  analytics: null,
+  progressSearch: ""
 };
 
 const dbApi = {
@@ -410,6 +411,107 @@ function buildAnalytics({ workouts }) {
   };
 }
 
+function completedSets(exercise) {
+  return exercise.sets.filter((set) => set.completed && num(set.weight) > 0 && int(set.reps) > 0);
+}
+
+function latestLoggedWeightsByExercise(workouts = state.allWorkouts) {
+  const latest = new Map();
+  workouts
+    .filter((workout) => workout.status === "finished")
+    .forEach((workout) => {
+      workout.exercises.forEach((exercise) => {
+        if (latest.has(exercise.exerciseId)) return;
+        const sets = completedSets(exercise);
+        if (!sets.length) return;
+        latest.set(exercise.exerciseId, sets.map((set) => set.weight));
+      });
+    });
+  return latest;
+}
+
+function weightPrefill(weights, index) {
+  if (!weights?.length) return "";
+  if (weights[index] != null) return String(weights[index]);
+  return String(weights[weights.length - 1] || "");
+}
+
+function buildExerciseProgress(workouts = state.allWorkouts) {
+  const grouped = new Map();
+  workouts
+    .filter((workout) => workout.status === "finished")
+    .slice()
+    .reverse()
+    .forEach((workout) => {
+      workout.exercises.forEach((exercise) => {
+        const sets = completedSets(exercise);
+        if (!sets.length) return;
+        const bestWeight = Math.max(...sets.map((set) => num(set.weight)));
+        const bestSet = sets.reduce((best, set) => {
+          const current = num(set.weight) * (1 + int(set.reps) / 30);
+          return current > best.score ? { score: current, weight: num(set.weight), reps: int(set.reps) } : best;
+        }, { score: 0, weight: 0, reps: 0 });
+        const volume = sets.reduce((sum, set) => sum + num(set.weight) * int(set.reps), 0);
+        const point = {
+          workoutId: workout.id,
+          date: workout.startedAt,
+          label: fmtDate(workout.startedAt),
+          bestWeight,
+          estimated1RM: Math.round(bestSet.score),
+          volume: Math.round(volume),
+          sets: sets.length,
+          reps: sets.reduce((sum, set) => sum + int(set.reps), 0)
+        };
+        const key = exercise.exerciseId && exercise.exerciseId !== "custom"
+          ? exercise.exerciseId
+          : exercise.exerciseNameSnapshot;
+        if (!grouped.has(key)) {
+          grouped.set(key, {
+            id: key,
+            exerciseId: exercise.exerciseId,
+            name: exercise.exerciseNameSnapshot,
+            points: []
+          });
+        }
+        grouped.get(key).points.push(point);
+      });
+    });
+
+  return [...grouped.values()]
+    .map((entry) => {
+      const points = entry.points.sort((a, b) => new Date(a.date) - new Date(b.date));
+      const latest = points[points.length - 1];
+      const previous = points[points.length - 2] || null;
+      const best = points.reduce((top, point) => point.estimated1RM > top.estimated1RM ? point : top, points[0]);
+      return {
+        ...entry,
+        points,
+        latest,
+        previous,
+        best,
+        delta: latest && previous ? latest.estimated1RM - previous.estimated1RM : 0
+      };
+    })
+    .sort((a, b) => {
+      const latestA = new Date(a.latest?.date || 0).getTime();
+      const latestB = new Date(b.latest?.date || 0).getTime();
+      return latestB - latestA || a.name.localeCompare(b.name);
+    });
+}
+
+function progressPath(points, width = 320, height = 120) {
+  if (!points.length) return "";
+  const values = points.map((point) => point.estimated1RM);
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const span = Math.max(1, max - min);
+  return points.map((point, index) => {
+    const x = points.length === 1 ? width / 2 : (index / (points.length - 1)) * width;
+    const y = height - ((point.estimated1RM - min) / span) * (height - 16) - 8;
+    return `${index === 0 ? "M" : "L"} ${x.toFixed(1)} ${y.toFixed(1)}`;
+  }).join(" ");
+}
+
 function totalVolume(workout) {
   return workout.exercises.reduce((sum, ex) => sum + ex.sets.reduce((inner, set) => inner + (set.completed ? num(set.weight) * int(set.reps) : 0), 0), 0);
 }
@@ -425,6 +527,7 @@ function render() {
   if (state.tab === "home") renderHome();
   if (state.tab === "active") renderActive();
   if (state.tab === "history") renderHistory();
+  if (state.tab === "progress") renderProgress();
 }
 
 function renderHome() {
@@ -570,6 +673,7 @@ async function startWorkout() {
   if (state.active && !confirm("A workout is already active. Replace it with a new one?")) return;
   const selected = state.templateRows.filter((row) => row.enabledByDefault);
   if (!selected.length) return toast("Enable at least one exercise.");
+  const latestWeights = latestLoggedWeightsByExercise();
   const startedAt = nowIso();
   const session = {
     id: uid("active"),
@@ -590,7 +694,7 @@ async function startWorkout() {
       sets: Array.from({ length: row.defaultSets }, (_, setIndex) => ({
         id: uid("active_set"),
         setNumber: setIndex + 1,
-        weight: "",
+        weight: weightPrefill(latestWeights.get(row.exerciseId), setIndex),
         reps: "",
         completed: false,
         isWarmup: false,
@@ -879,6 +983,80 @@ function renderHistory() {
   });
   $("[data-action='import-workout']").addEventListener("click", () => openWorkoutEditor(createBlankWorkout("imported"), true));
   $$("[data-workout-id]").forEach((button) => button.addEventListener("click", () => openWorkoutById(button.dataset.workoutId)));
+}
+
+function renderProgress() {
+  const query = state.progressSearch.trim().toLowerCase();
+  const progress = buildExerciseProgress().filter((item) => !query || item.name.toLowerCase().includes(query));
+
+  $("#view").innerHTML = `
+    <div class="stack">
+      <section class="card progress-hero">
+        <div>
+          <span class="eyebrow">Exercise Tracking</span>
+          <h1 class="screen-title">Progress</h1>
+          <p class="muted">Every exercise gets its own trend line from your saved workouts.</p>
+        </div>
+        <div class="metric-badge">${progress.length} tracked</div>
+      </section>
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m20.4 18.9-4.3-4.3a7.2 7.2 0 1 0-1.5 1.5l4.3 4.3 1.5-1.5ZM5.2 10.5a5.3 5.3 0 1 1 10.6 0 5.3 5.3 0 0 1-10.6 0Z"/></svg>
+        <input id="progress-search" type="search" value="${escapeHtml(state.progressSearch)}" placeholder="Search an exercise">
+      </div>
+      <section class="stack">
+        ${progress.length ? progress.map(progressExerciseCard).join("") : `<div class="empty-state">No tracked exercises yet. Finish a workout first.</div>`}
+      </section>
+    </div>
+  `;
+
+  $("#progress-search")?.addEventListener("input", (event) => {
+    state.progressSearch = event.target.value;
+    renderProgress();
+    $("#progress-search")?.focus();
+  });
+}
+
+function progressExerciseCard(entry) {
+  const path = progressPath(entry.points);
+  const dots = entry.points.map((point, index) => {
+    const width = 320;
+    const height = 120;
+    const values = entry.points.map((item) => item.estimated1RM);
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const span = Math.max(1, max - min);
+    const x = entry.points.length === 1 ? width / 2 : (index / (entry.points.length - 1)) * width;
+    const y = height - ((point.estimated1RM - min) / span) * (height - 16) - 8;
+    return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4"></circle>`;
+  }).join("");
+
+  return `
+    <article class="card exercise-progress-card">
+      <div class="metric-line">
+        <div>
+          <div class="exercise-title">${escapeHtml(entry.name)}</div>
+          <div class="exercise-meta">${entry.points.length} logged sessions • Last on ${escapeHtml(entry.latest.label)}</div>
+        </div>
+        <span class="gain ${entry.delta < 0 ? "down" : ""}">${entry.delta >= 0 ? "+" : ""}${entry.delta} est 1RM</span>
+      </div>
+      <div class="progress-stats">
+        <div><strong>${entry.latest.bestWeight}</strong><span>Latest Top Weight</span></div>
+        <div><strong>${entry.latest.estimated1RM}</strong><span>Latest est 1RM</span></div>
+        <div><strong>${entry.best.estimated1RM}</strong><span>Best est 1RM</span></div>
+        <div><strong>${entry.latest.volume}</strong><span>Latest Volume</span></div>
+      </div>
+      <div class="chart-shell">
+        <svg class="progress-chart" viewBox="0 0 320 120" role="img" aria-label="${escapeHtml(entry.name)} progress chart">
+          <path class="chart-line" d="${path}"></path>
+          ${dots}
+        </svg>
+        <div class="chart-labels">
+          <span>${escapeHtml(entry.points[0].label)}</span>
+          <span>${escapeHtml(entry.latest.label)}</span>
+        </div>
+      </div>
+    </article>
+  `;
 }
 
 function progressCards() {

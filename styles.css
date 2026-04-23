@@ -750,7 +750,7 @@ svg {
   height: calc(var(--nav-h) + var(--safe-b));
   padding: 10px 14px calc(10px + var(--safe-b));
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 8px;
   background: rgba(7, 8, 9, 0.88);
   border-top: 1px solid var(--line);
@@ -770,13 +770,105 @@ svg {
 }
 
 .nav-item svg {
-  width: 23px;
+  width: 21px;
 }
 
 .nav-item.active {
   color: #101306;
   background: var(--lime);
   box-shadow: var(--glow);
+}
+
+.progress-hero {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: start;
+  padding: 18px;
+}
+
+.exercise-progress-card {
+  padding: 16px;
+  display: grid;
+  gap: 14px;
+}
+
+.progress-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.progress-stats div {
+  padding: 12px;
+  border-radius: 14px;
+  background: #0d1013;
+  border: 1px solid var(--line);
+}
+
+.progress-stats strong {
+  display: block;
+  font-size: 21px;
+  line-height: 1;
+  font-weight: 1000;
+  color: var(--lime);
+}
+
+.progress-stats span {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.chart-shell {
+  padding: 14px 14px 10px;
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, rgba(34,167,255,0.08), transparent 40%),
+    #0b0e12;
+  border: 1px solid var(--line);
+}
+
+.progress-chart {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.progress-chart circle {
+  fill: var(--lime);
+  stroke: #101306;
+  stroke-width: 2;
+}
+
+.chart-line {
+  fill: none;
+  stroke: var(--blue);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 10px rgba(34,167,255,0.3));
+}
+
+.chart-labels {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.gain.down {
+  color: #fff;
+  background: rgba(255, 85, 62, 0.82);
 }
 
 .modal-backdrop {
@@ -883,5 +975,16 @@ svg {
   .view {
     padding-left: 20px;
     padding-right: 20px;
+  }
+}
+
+@media (max-width: 420px) {
+  .nav-item {
+    font-size: 10px;
+  }
+
+  .progress-hero,
+  .active-hero {
+    grid-template-columns: 1fr;
   }
 }
